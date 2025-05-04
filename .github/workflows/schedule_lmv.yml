@@ -1,4 +1,4 @@
-name: Scheduled FitBot run
+name: Scheduled FitBot Lunes Miercoles Viernes
 
 on:
   workflow_dispatch:
