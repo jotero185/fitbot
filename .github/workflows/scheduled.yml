@@ -13,21 +13,23 @@ jobs:
         run: |
           # Lista de horas objetivo
           target_times=("17:00:00" "08:00:00")
-
           echo "🎯 Target times: ${target_times[*]}"
 
-          while true; do
-            current_time=$(date -u +"%H:%M:%S")
+          executed=0
+
+          while [ $executed -eq 0 ]; do
+            current_time=$(date -u +"%H:%M")
             echo "⏱️ Current UTC time: $current_time"
 
             for target in "${target_times[@]}"; do
               if [ "$current_time" = "$target" ]; then
-                echo "✅ Target time $target reached! Executing action..."
-                exit 0  # Sale del job y continúa con los siguientes steps
+                echo "✅ Target time $target matched! Executing action..."
+                executed=1
+                break
               fi
             done
 
-            sleep 1
+            sleep 5  # Refresca cada 5 segundos
           done
       - name: Do the real work
         run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"1\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"3\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"5\":{\"time\":\"1000\"\,\"name\":\"CrossFit\"}'} -e box-name=crossfitdrkacoruna -e box-id=9942 -e days-in-advance=3 jotero185/fitbot
