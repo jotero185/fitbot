@@ -12,7 +12,7 @@ jobs:
       - name: Wait until 09:00:00 UTC
         run: |
           # Lista de horas objetivo
-          target_times=("17:00:00" "08:00:00")
+          target_times=("17:00" "08:00")
           echo "🎯 Target times: ${target_times[*]}"
 
           executed=0
