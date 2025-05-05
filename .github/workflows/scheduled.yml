@@ -3,11 +3,31 @@ name: Scheduled FitBot run
 on:
   workflow_dispatch:
   schedule:
-  - cron: "00 17 * * 1,6"
-  - cron: "00 8 * * 3"
+  - cron: "50 16 * * 1,6"
+  - cron: "50 7 * * 3"
 jobs:
-  run:
+  wait_and_run:
     runs-on: ubuntu-latest
     steps:
-      - name: Run fitbot
+      - name: Wait until 09:00:00 UTC
+        run: |
+          # Lista de horas objetivo
+          target_times=("17:00:00" "08:00:00")
+
+          echo "🎯 Target times: ${target_times[*]}"
+
+          while true; do
+            current_time=$(date -u +"%H:%M:%S")
+            echo "⏱️ Current UTC time: $current_time"
+
+            for target in "${target_times[@]}"; do
+              if [ "$current_time" = "$target" ]; then
+                echo "✅ Target time $target reached! Executing action..."
+                exit 0  # Sale del job y continúa con los siguientes steps
+              fi
+            done
+
+            sleep 5
+          done
+      - name: Do the real work
         run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"1\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"3\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"5\":{\"time\":\"1000\"\,\"name\":\"CrossFit\"}'} -e box-name=crossfitdrkacoruna -e box-id=9942 -e days-in-advance=3 jotero185/fitbot
