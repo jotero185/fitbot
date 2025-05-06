@@ -9,7 +9,7 @@ jobs:
   wait_and_run:
     runs-on: ubuntu-latest
     steps:
-      - name: Wait until 09:00:00 UTC
+      - name: Wait until target hour
         run: |
           # Lista de horas objetivo
           target_times=("17:00" "08:00")
@@ -31,5 +31,5 @@ jobs:
 
             sleep 5  # Refresca cada 5 segundos
           done
-      - name: Do the real work
+      - name: Make the appointment
         run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"1\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"3\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"5\":{\"time\":\"1000\"\,\"name\":\"CrossFit\"}'} -e box-name=crossfitdrkacoruna -e box-id=9942 -e days-in-advance=3 jotero185/fitbot
