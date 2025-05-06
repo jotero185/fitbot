@@ -5,6 +5,9 @@ on:
   schedule:
   - cron: "50 16 * * 1,6"
   - cron: "50 7 * * 3"
+  # schedule:
+  # - cron: "50 16 * * 0,5"
+  # - cron: "50 14 * * 2"
 jobs:
   wait_and_run:
     runs-on: ubuntu-latest
@@ -12,7 +15,7 @@ jobs:
       - name: Wait until target hour
         run: |
           # Lista de horas objetivo
-          target_times=("17:00" "08:00")
+          target_times=("17:00" "15:00" "08:00")
           echo "🎯 Target times: ${target_times[*]}"
 
           executed=0
