@@ -10,7 +10,7 @@ jobs:
   wait_and_run:
     runs-on: ubuntu-latest
     env:
-      BOOKING_OPTION: B
+      BOOKING_OPTION: A
     steps:
       - name: Wait until target hour
         run: |
