@@ -12,6 +12,8 @@ jobs:
     env:
       BOOKING_OPTION: A
     steps:
+      - name: Pull fitbot image
+        run: docker pull jotero185/fitbot
       - name: Wait until target hour
         run: |
           # Lista de horas objetivo
