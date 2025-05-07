@@ -23,6 +23,7 @@ jobs:
           executed=0
 
           while [ $executed -eq 0 ]; do
+            break
             current_time=$(date -u +"%H:%M")
             echo "⏱️ Current UTC time: $current_time"
 
