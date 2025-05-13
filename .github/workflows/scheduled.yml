@@ -1,12 +1,52 @@
 name: Scheduled FitBot run
-
 on:
+  workflow_dispatch:
   schedule:
-  - cron: "25 17 * * *"
+    - cron: "50 16 * * 0,1,5,6"
+    - cron: "50 7 * * 3"
+    - cron: "50 14 * * 2"
 
 jobs:
-  run:
+  wait_and_run:
     runs-on: ubuntu-latest
+    env:
+      BOOKING_OPTION: A  # Cambia entre A o B según necesites
     steps:
-      - name: Run fitbot
-        run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"0\":{\"time\":\"1920\"\,\"name\":\"WOD\"}\,\"1\":{\"time\":\"1920\"\,\"name\":\"Endurance\"}\,\"3\":{\"time\":\"1920\"\,\"name\":\"WOD\"}'} -e box-name=areacrossfit -e box-id=8266 -e days-in-advance=2 pablobuenaposada/fitbot
+      - name: Pull fitbot image
+        run: docker pull jotero185/fitbot
+      - name: Wait until target hour
+        run: |
+          target_times=("17:00" "15:00" "08:00")
+          echo "🎯 Target times: ${target_times[*]}"
+
+          executed=0
+
+          while [ $executed -eq 0 ]; do
+            current_time=$(date -u +"%H:%M")
+            echo "⏱️ Current UTC time: $current_time"
+
+            for target in "${target_times[@]}"; do
+              if [ "$current_time" = "$target" ]; then
+                echo "✅ Target time $target matched! Executing action..."
+                executed=1
+                break
+              fi
+            done
+
+            sleep 30
+          done
+
+      - name: Make the appointment (dynamic)
+        run: |
+          echo "🔄 Booking option selected: $BOOKING_OPTION"
+          
+          if [ "$BOOKING_OPTION" = "A" ]; then
+            echo "🚀 Running Martes Jueves Sabado booking"
+            docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"1\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"3\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"5\":{\"time\":\"1000\"\,\"name\":\"CrossFit\"}'} -e box-name=crossfitdrkacoruna -e box-id=9942 -e days-in-advance=3 jotero185/fitbot
+          elif [ "$BOOKING_OPTION" = "B" ]; then
+            echo "🚀 Running Lunes Miercoles Viernes booking"
+            docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"0\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"2\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"5\":{\"time\":\"1700\"\,\"name\":\"CrossFit\"}'} -e box-name=crossfitdrkacoruna -e box-id=9942 -e days-in-advance=3 jotero185/fitbot
+          else
+            echo "❌ Invalid BOOKING_OPTION: $BOOKING_OPTION"
+            exit 1
+          fi
