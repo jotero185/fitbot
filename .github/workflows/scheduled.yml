@@ -10,7 +10,7 @@ jobs:
   wait_and_run:
     runs-on: ubuntu-latest
     env:
-      BOOKING_OPTION: A  # Cambia entre A o B
+      BOOKING_OPTION: A  # Cambia entre A o B o P for Pause
     steps:
       - name: Pull fitbot image
         run: docker pull jotero185/fitbot
@@ -46,6 +46,8 @@ jobs:
           elif [ "$BOOKING_OPTION" = "B" ]; then
             echo "🚀 Running Lunes Miercoles Viernes booking"
             docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals={'\"0\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"2\":{\"time\":\"1900\"\,\"name\":\"CrossFit\"}\,\"5\":{\"time\":\"1700\"\,\"name\":\"CrossFit\"}'} -e box-name=crossfitdrkacoruna -e box-id=9942 -e days-in-advance=3 jotero185/fitbot
+          elif [ "$BOOKING_OPTION" = "P" ]; then
+            echo "🚀 Pause Bot"
           else
             echo "❌ Invalid BOOKING_OPTION: $BOOKING_OPTION"
             exit 1
