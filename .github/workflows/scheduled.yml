@@ -10,7 +10,7 @@ jobs:
   wait_and_run:
     runs-on: ubuntu-latest
     env:
-      BOOKING_OPTION: P  # Cambia entre A o B o P for Pause
+      BOOKING_OPTION: A  # Cambia entre A o B o P for Pause
     steps:
       - name: Pull fitbot image
         run: docker pull jotero185/fitbot
