@@ -26,7 +26,7 @@ jobs:
             echo "⏱️ Current UTC time: $current_time"
 
             for target in "${target_times[@]}"; do
-              if [ "$current_time" = "$target" ]; then
+              if [[ "$current_time" > "$target" || "$current_time" == "$target" ]]; then
                 echo "✅ Target time $target matched! Executing action..."
                 executed=1
                 break
